@@ -20,6 +20,14 @@ contract NeoFund {
         bool exists;
     }
 
+    modifier onlyAdmin() {
+        require(
+            msg.sender == owner,
+            "Only admin can withdraw from the contract."
+        );
+        _;
+    }
+
     function get_contract_balance() public view returns (uint256) {
         return address(this).balance;
     }
@@ -36,11 +44,7 @@ contract NeoFund {
         }
     }
 
-    function withdraw(uint256 withdraw_amount) public payable {
-        require(
-            msg.sender == owner,
-            "Only admin can withdraw from the contract."
-        );
+    function withdraw(uint256 withdraw_amount) public payable onlyAdmin {
         require(
             withdraw_amount <= address(this).balance,
             "Amount to withdraw is greater than the actual balance."
