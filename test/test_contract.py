@@ -1,4 +1,6 @@
 import os
+import pytest
+from web3 import exceptions
 
 
 def test_contract_state_vars(setup, deployed_contract):
@@ -75,26 +77,21 @@ def test_contract_fund_and_withdraw(setup, deployed_contract):
     assert funder_exists == True
 
     # widthrawing a value more than contract balance and epxecting to fail (Revert)
-    try:
+
+    with pytest.raises(
+        exceptions.ContractLogicError,
+        match=".* Amount to withdraw is greater than the actual balance.$",
+    ):
         deployed_contract["contract"].functions.withdraw(FUNDING_AMOUNT + 100).transact(
             {"from": os.getenv("PUB_ADDR")}
         )
-        assert False
-    except Exception as err:
-        assert (
-            str(err)
-            == "execution reverted: VM Exception while processing transaction: revert Amount to withdraw is greater than the actual balance."
-        )
 
     # calling widthraw from another address and epxecting to fail (Revert) because only admin can withdraw!
-    try:
+    with pytest.raises(
+        exceptions.ContractLogicError,
+        match=".* Only admin can withdraw from the contract.$",
+    ):
         SOME_ADDRESS = "0x7Ac8Fd69dEeeD24821333917f636E516EC70219E"
         deployed_contract["contract"].functions.withdraw(FUNDING_AMOUNT + 100).transact(
             {"from": SOME_ADDRESS}
-        )
-        assert False
-    except Exception as err:
-        assert (
-            str(err)
-            == "execution reverted: VM Exception while processing transaction: revert Only admin can withdraw from the contract."
         )

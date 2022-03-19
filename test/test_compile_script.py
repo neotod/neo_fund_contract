@@ -12,34 +12,34 @@ def test_compile_success(setup):
 
     try:
         assert result["success"] == True
-    except:
+    except KeyError:
         assert False, "success key is missing"
 
     try:
         assert result["data"] != None
-    except:
+    except KeyError:
         assert False, "data key is missing"
 
     try:
         assert result["data"]["name"] != None
-    except:
+    except KeyError:
         assert False, "data.name key is missing"
 
     assert result["data"]["name"] == CONTRACT_NAME
 
     try:
         assert result["data"]["build"] != None
-    except:
+    except KeyError:
         assert False, "data.build key is missing"
 
     try:
         assert result["data"]["build"]["abi"] != None
-    except:
+    except KeyError:
         assert False, "data.build.abi key is missing"
 
     try:
         assert result["data"]["build"]["bytecode"] != None
-    except:
+    except KeyError:
         assert False, "data.build.bytecode key is missing"
 
 
@@ -55,5 +55,5 @@ def test_compile_fail(setup):
 
     try:
         assert result["success"] == False
-    except:
+    except KeyError:
         assert False, "success key is missing"
